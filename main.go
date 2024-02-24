@@ -3,74 +3,16 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"unicode/utf8"
 )
 
-var (
-	path string
-)
-
-var availableOperations = [2]string{"-c", "-l"}
-
-func safeArrayAccess(arr []string, index int) (value string, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = fmt.Errorf("Panic: %v", r)
-		}
-	}()
-
-	value = arr[index]
-	return value, nil
-}
-
 func main() {
-	args := os.Args
-	filePath := ""
-	operation := ""
+	operation, filePath := getParameters()
+	content, err := getContent(filePath)
 
-	if len(args) == 1 {
-		fmt.Println("Missing target file")
-	}
-
-	if len(args) == 2 {
-		file, err := safeArrayAccess(args, 1)
-
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		filePath = file
-	}
-
-	if len(args) >= 3 {
-		operationInput, err := safeArrayAccess(args, 1)
-
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		operation = operationInput
-
-		file, err := safeArrayAccess(args, 2)
-
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		filePath = file
-	}
-
-	if filePath == "" {
-		fmt.Println("Missing target file")
-		os.Exit(1)
-	}
-
-	content, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -108,6 +50,7 @@ func main() {
 			wordCount := wordCount(content)
 			fmt.Printf("Byte   Line   Word   File \n")
 			fmt.Printf("%v   %v   %v %s \n", byteCount, lineCount, wordCount, filePath)
+			break
 		}
 	default:
 		{
@@ -115,6 +58,43 @@ func main() {
 			os.Exit(1)
 		}
 	}
+}
+
+func getContent(filePath string) (content []byte, err error) {
+	if filePath != "" {
+		return os.ReadFile(filePath)
+	}
+
+	data, readErr := io.ReadAll(os.Stdin)
+	if readErr != nil {
+		return content, readErr
+	}
+
+	return data, nil
+}
+
+func getParameters() (operation string, filePath string) {
+	args := os.Args
+	filePath = ""
+
+	if len(args) == 2 {
+		firstArg := args[1]
+
+		switch firstArg {
+		case "-c", "-l", "-w", "-m":
+			operation = firstArg
+			break
+		default:
+			filePath = firstArg
+		}
+	}
+
+	if len(args) >= 3 {
+		operation = args[1]
+		filePath = args[2]
+	}
+
+	return operation, filePath
 }
 
 func byteCount(fileContent []byte) int {
