@@ -101,12 +101,18 @@ func main() {
 			fmt.Printf("%v %s \n", count, filePath)
 			break
 		}
-	default:
+	case "":
 		{
 			byteCount := byteCount(content)
 			lineCount := lineCount(content)
 			wordCount := wordCount(content)
+			fmt.Printf("Byte   Line   Word   File \n")
 			fmt.Printf("%v   %v   %v %s \n", byteCount, lineCount, wordCount, filePath)
+		}
+	default:
+		{
+			fmt.Printf("Invalid operation")
+			os.Exit(1)
 		}
 	}
 }
