@@ -27,109 +27,104 @@ func safeArrayAccess(arr []string, index int) (value string, err error) {
 
 func main() {
 	args := os.Args
+	filePath := ""
+	operation := ""
 
-	operation, err := safeArrayAccess(args, 1)
-
-	if err != nil {
-		fmt.Println("Missing operation. Available operations: -c, -l, -w, -m")
-		os.Exit(1)
+	if len(args) == 1 {
+		fmt.Println("Missing target file")
 	}
 
-	if operation != "-c" && operation != "-l" && operation != "-w" && operation != "-m" {
-		fmt.Println("Invalid operation. Available operations: -c, -l, -w, -m")
-		os.Exit(1)
+	if len(args) == 2 {
+		file, err := safeArrayAccess(args, 1)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		filePath = file
 	}
 
-	file, err := safeArrayAccess(args, 2)
+	if len(args) >= 3 {
+		operationInput, err := safeArrayAccess(args, 1)
 
-	if err != nil {
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		operation = operationInput
+
+		file, err := safeArrayAccess(args, 2)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		filePath = file
+	}
+
+	if filePath == "" {
 		fmt.Println("Missing target file")
 		os.Exit(1)
 	}
 
-	if operation == "-c" {
-		count, err := byteCount(file)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		fmt.Printf("%v %s \n", count, file)
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	if operation == "-l" {
-		count, err := lineCount(file)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+	switch operation {
+	case "-c":
+		{
+			count := byteCount(content)
+			fmt.Printf("%v %s \n", count, filePath)
+			break
 		}
-
-		fmt.Printf("%v %s \n", count, file)
-	}
-
-	if operation == "-w" {
-		count, err := wordCount(file)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+	case "-l":
+		{
+			count := lineCount(content)
+			fmt.Printf("%v %s \n", count, filePath)
+			break
 		}
-
-		fmt.Printf("%v %s \n", count, file)
-	}
-
-	if operation == "-m" {
-		count, err := characterCount(file)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+	case "-w":
+		{
+			count := wordCount(content)
+			fmt.Printf("%v %s \n", count, filePath)
+			break
 		}
-
-		fmt.Printf("%v %s \n", count, file)
+	case "-m":
+		{
+			count := characterCount(content)
+			fmt.Printf("%v %s \n", count, filePath)
+			break
+		}
+	default:
+		{
+			byteCount := byteCount(content)
+			lineCount := lineCount(content)
+			wordCount := wordCount(content)
+			fmt.Printf("%v   %v   %v %s \n", byteCount, lineCount, wordCount, filePath)
+		}
 	}
 }
 
-func byteCount(file string) (count int, err error) {
-	content, readError := os.ReadFile(file)
-	if readError != nil {
-		err = readError
-	}
-
-	count = len(content)
-
-	return count, err
+func byteCount(fileContent []byte) int {
+	return len(fileContent)
 }
 
-func lineCount(file string) (count int, err error) {
-	content, readError := os.ReadFile(file)
-	if readError != nil {
-		err = readError
-	}
-
+func lineCount(fileContent []byte) int {
 	lineSep := []byte{'\n'}
-	count = bytes.Count(content, lineSep)
-
-	return count, err
+	return bytes.Count(fileContent, lineSep)
 }
 
-func wordCount(file string) (count int, err error) {
-	content, readError := os.ReadFile(file)
-	if readError != nil {
-		err = readError
-	}
-
-	words := strings.Fields(string(content))
-	count = len(words)
-
-	return count, err
+func wordCount(fileContent []byte) int {
+	words := strings.Fields(string(fileContent))
+	return len(words)
 }
 
-func characterCount(file string) (count int, err error) {
-	content, readError := os.ReadFile(file)
-	if readError != nil {
-		err = readError
-	}
-
-	count = utf8.RuneCountInString(string(content))
-
-	return count, err
+func characterCount(fileContent []byte) int {
+	return utf8.RuneCountInString(string(fileContent))
 }
