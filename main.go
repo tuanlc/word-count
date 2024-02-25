@@ -10,12 +10,7 @@ import (
 )
 
 func main() {
-	stdin, err := io.ReadAll(os.Stdin)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	stdin := getStdin()
 
 	outcome, err := foo(os.Args, stdin)
 
@@ -25,6 +20,21 @@ func main() {
 	}
 
 	fmt.Println(outcome)
+}
+
+func getStdin() []byte {
+	var stdin []byte
+
+	go func() {
+		data, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			fmt.Println("Error reading from stdin:", err)
+			os.Exit(1)
+		}
+		stdin = data
+	}()
+
+	return stdin
 }
 
 func foo(args []string, stdin []byte) (outcome string, err error) {

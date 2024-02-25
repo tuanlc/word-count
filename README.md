@@ -11,22 +11,102 @@ https://codingchallenges.fyi/challenges/challenge-wc
 
 ## Commands
 
-### Run unit test
+### Development
+
+- Run unit test
 
 ```bash
 $ make test
 ```
 
-### Run build
+- Run build
 
 ```bash
 $ make build
 ```
 
-### Clean folder
+- Clean folder
 
 ```bash
 $ make clean
+```
+
+### Usage
+
+#### Directly usage
+
+After building the tool successfully, there will be the executable file `ccwc` in the root folder.
+
+- Count bytes
+
+```bash
+$ ./ccwc -c test.txt
+342190 test.txt
+```
+
+- Count lines
+
+```bash
+$ ./ccwc -l test.txt
+7145 test.txt
+```
+
+- Count words
+
+```bash
+$ ./ccwc -w test.txt
+58164 test.txt
+```
+
+- Count characters
+
+```bash
+$ ./ccwc -m test.txt
+339292 test.txt
+```
+
+- Count characters
+
+```bash
+$ ./ccwc test.txt
+7145 58164 342190 test.txt
+```
+
+#### Read from standar input
+
+- Count bytes
+
+```bash
+$ cat test.txt | ./ccwc -c
+342190 test.txt
+```
+
+- Count lines
+
+```bash
+$ cat test.txt | ./ccwc -l
+7145 test.txt
+```
+
+- Count words
+
+```bash
+$ cat test.txt | ./ccwc -w
+58164 test.txt
+```
+
+- Count characters
+
+```bash
+$ cat test.txt | ./ccwc -m
+339292 test.txt
+```
+
+- Count characters
+
+```bash
+$ cat test.txt | ./ccwc
+7145 58164 342190 test.txt
 ```
 
 ## Testing
