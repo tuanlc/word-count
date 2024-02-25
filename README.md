@@ -28,6 +28,10 @@ $ make build
 $ make clean
 ```
 
+## Testing
+
+`ccwc` is a tool that tries to clone features from the [Unix command](<https://en.wikipedia.org/wiki/Wc_(Unix)>) `wc`. Thus, the unit tests will use the output from `wc` as the source of truth. Moreover, the outcome of count words method could be different on different environments.
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
