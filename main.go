@@ -10,37 +10,54 @@ import (
 )
 
 func main() {
-	operation, filePath := getParameters()
-	content, err := getContent(filePath)
+	stdin, err := io.ReadAll(os.Stdin)
 
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
+	outcome, err := foo(os.Args, stdin)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Println(outcome)
+}
+
+func foo(args []string, stdin []byte) (outcome string, err error) {
+	operation, filePath := getParameters(args)
+	content, err := getContent(filePath, stdin)
+
+	if err != nil {
+		return outcome, err
+	}
+
 	switch operation {
 	case "-c":
 		{
 			count := byteCount(content)
-			fmt.Printf("%v %s \n", count, filePath)
+			outcome = fmt.Sprintf("%v %s", count, filePath)
 			break
 		}
 	case "-l":
 		{
 			count := lineCount(content)
-			fmt.Printf("%v %s \n", count, filePath)
+			outcome = fmt.Sprintf("%v %s", count, filePath)
 			break
 		}
 	case "-w":
 		{
 			count := wordCount(content)
-			fmt.Printf("%v %s \n", count, filePath)
+			outcome = fmt.Sprintf("%v %s", count, filePath)
 			break
 		}
 	case "-m":
 		{
 			count := characterCount(content)
-			fmt.Printf("%v %s \n", count, filePath)
+			outcome = fmt.Sprintf("%v %s", count, filePath)
 			break
 		}
 	case "":
@@ -48,33 +65,27 @@ func main() {
 			byteCount := byteCount(content)
 			lineCount := lineCount(content)
 			wordCount := wordCount(content)
-			fmt.Printf("Byte   Line   Word   File \n")
-			fmt.Printf("%v   %v   %v %s \n", byteCount, lineCount, wordCount, filePath)
+			outcome = fmt.Sprintf("%v %v %v %s", lineCount, wordCount, byteCount, filePath)
 			break
 		}
 	default:
 		{
-			fmt.Printf("Invalid operation")
-			os.Exit(1)
+			return outcome, fmt.Errorf("Invalid operation %s", operation)
 		}
 	}
+
+	return outcome, nil
 }
 
-func getContent(filePath string) (content []byte, err error) {
+func getContent(filePath string, stdin []byte) (content []byte, err error) {
 	if filePath != "" {
 		return os.ReadFile(filePath)
 	}
 
-	data, readErr := io.ReadAll(os.Stdin)
-	if readErr != nil {
-		return content, readErr
-	}
-
-	return data, nil
+	return stdin, nil
 }
 
-func getParameters() (operation string, filePath string) {
-	args := os.Args
+func getParameters(args []string) (operation string, filePath string) {
 	filePath = ""
 
 	if len(args) == 2 {
