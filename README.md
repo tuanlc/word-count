@@ -1,4 +1,4 @@
-# Book management
+# Word count CLI in Go
 
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Project CI](https://github.com/tuanlc/word-count/actions/workflows/ci.yml/badge.svg)](https://github.com/tuanlc/word-count/actions/workflows/ci.yml)
