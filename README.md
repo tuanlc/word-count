@@ -8,9 +8,25 @@
 
 https://codingchallenges.fyi/challenges/challenge-wc
 
-## Technologies
+## Commands
 
-- Language: [Golang](https://github.com/golang/go)
+### Run unit test
+
+```bash
+$ make test
+```
+
+### Run build
+
+```bash
+$ make build
+```
+
+### Clean folder
+
+```bash
+$ make clean
+```
 
 ## License
 
